@@ -2,12 +2,16 @@ package com.example.resistorcalculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
+
 public class MainActivity extends AppCompatActivity {
     View[] band = new View[4];
     NumberPicker[] picker = new NumberPicker[band.length];
@@ -19,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Setup();
     }
     void Setup()
@@ -48,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         picker[picker.length-1].setMaxValue(toleranceColor[0].length - 1);
         picker[picker.length-1].setMinValue(0);
         Log.i("Result", "Test 2");
-        totalResistance.setText("0");
-        toleranceResult.setText(toleranceBand + "Ω");
+        totalResistance.setText("0"+ " Ω");
+        toleranceResult.setText(toleranceBand);
         Log.i("Result", "Test 3");
         picker[0].setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("picker value", String.valueOf(valuePicker));
                 band[3].setBackgroundColor(Color.parseColor(toleranceColor[1][valuePicker]));
                 toleranceBand = toleranceColor[2][valuePicker];
-                toleranceResult.setText(toleranceBand + "Ω");
+                toleranceResult.setText(toleranceBand);
             }
         });
     }
@@ -113,12 +118,19 @@ public class MainActivity extends AppCompatActivity {
         Log.i("Calculate", "Begin Calculation");
         double result = 0;
         result = ((firstBand * 10) + secondBand) * multiplierBand;
-        totalResistance.setText(Double.toString(result));
+        DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(8);
+        totalResistance.setText(df.format((result)) + " Ω");
     }
 
     public void Clear(View view) {
         for(int i = 0; i < picker.length - 1; i++) {
             picker[i].setValue(0);
+            band[i].setBackgroundColor(Color.parseColor("#17202A"));
         }
+        band[band.length-1].setBackgroundColor(Color.parseColor("#6E2C00"));
+        picker[picker.length-1].setValue(0);
+        totalResistance.setText("0" + " Ω");
+        toleranceResult.setText("+/-1%");
     }
 }
